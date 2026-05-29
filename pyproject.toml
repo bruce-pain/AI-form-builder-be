@@ -1,7 +1,7 @@
 [project]
-name = "fastapi-boilerplate"
+name = "ai-form-builder"
 version = "0.1.0"
-description = "A simple FastAPI backend boilerplate, based on the HNG FastAPI Boilerplate"
+description = "A FastAPI backend for an AI form building application"
 authors = [{ name = "Franklin Ikeh", email = "ikehfranklin06@gmail.com" }]
 requires-python = ">=3.12,<4"
 readme = "README.md"

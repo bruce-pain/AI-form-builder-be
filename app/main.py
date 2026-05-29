@@ -26,8 +26,8 @@ async def lifespan(app: FastAPI):
 limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
-    title="Boilerplate",
-    description="FastAPI Boilerplate Application",
+    title="AI Form Builder",
+    description="FastAPI backend for the AI form builder application",
     version="1.0.0",
     lifespan=lifespan,
     docs_url="/v1/docs",
@@ -55,7 +55,7 @@ app.include_router(main_router)
 async def get_root(request: Request) -> JSONResponse:
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content={"URL": "", "message": "Welcome to the boilerplate API"},
+        content={"URL": "", "message": "Welcome to the AI form builder API"},
     )
 
 
