@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  ci-pipeline:
+    runs-on: ubuntu-latest
+    env:
+      ENV: ${{ secrets.ENV }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Decode and create .env file
+        run: echo $ENV | base64 -d > .env
+
+      - name: Install dependencies
+        run: make install
+
+      # - name: Run migrations
+      #   run: make upgrade
+
+      - name: Run Ruff
+        run: make lint
+
+      - name: Run Pytest
+        run: make test
+
