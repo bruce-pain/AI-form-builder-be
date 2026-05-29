@@ -177,3 +177,7 @@ cython_debug/
 #.idea/
 
 alembic/versions/*py
+
+# posting
+posting-collection/
+posting-dev.env
