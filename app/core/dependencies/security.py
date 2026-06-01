@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core import response_messages
 from app.core.database import get_db
-from app.features.auth.jwt import verify_jwt_token
+from app.features.auth.utils.jwt import verify_jwt_token
 from app.features.auth.models import User
 
 oauth_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
