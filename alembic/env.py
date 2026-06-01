@@ -3,9 +3,11 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+from app.core.base.types import PydanticType
 from app.core.config import settings
 from app.core.database import Base
 from app.features.auth.models import User  # noqa: F401
+from app.features.form.models import Form  # noqa: F401
 
 DATABASE_URL = settings.database_url
 
@@ -56,6 +58,14 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
+def render_item(type_, obj, autogen_context):
+    """Apply custom rendering for PydanticType."""
+    if type_ == "type" and isinstance(obj, PydanticType):
+        autogen_context.imports.add("from sqlalchemy.dialects.postgresql import JSONB")
+        return "JSONB()"
+    return False
+
+
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
@@ -70,7 +80,11 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            render_item=render_item,
+        )
 
         with context.begin_transaction():
             context.run_migrations()

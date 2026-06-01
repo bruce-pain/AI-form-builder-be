@@ -1,7 +1,8 @@
 """User data model"""
 
-from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
+from typing import List, Optional
+
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.base.model import BaseTableModel
 
@@ -9,8 +10,10 @@ from app.core.base.model import BaseTableModel
 class User(BaseTableModel):
     __tablename__ = "users"
 
-    email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String, nullable=True)
+    email: Mapped[str] = mapped_column(unique=True, nullable=False)
+    password: Mapped[Optional[str]]
 
-    def __str__(self):
+    forms: Mapped[List["Form"]] = relationship(back_populates="user")
+
+    def __str__(self) -> str:
         return "User: {}".format(self.email)
