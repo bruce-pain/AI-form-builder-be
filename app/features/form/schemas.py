@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.core.base.schema import BaseResponseModel
 from app.features.form.models import FormQuestion
@@ -22,6 +22,8 @@ class FormUpdateRequest(BaseModel):
 
 
 class FormResponseData(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     title: str
     description: str
@@ -37,6 +39,8 @@ class FormResponse(BaseResponseModel):
 
 
 class FormListResponseData(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     title: str
     description: str

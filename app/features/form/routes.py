@@ -9,6 +9,7 @@ from app.core.database import get_db
 from app.core.dependencies.security import get_current_user
 from app.features.auth.models import User
 from app.features.form import schemas
+from app.features.form.service import FormService
 
 form_router = APIRouter(prefix="/forms", tags=["Forms"])
 
@@ -25,7 +26,14 @@ def create_form(
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ):
-    pass
+    service = FormService(db=db)
+    form = service.create(schema=schema, user_id=current_user.id)
+    data = schemas.FormResponseData.model_validate(form)
+    return schemas.FormResponse(
+        status_code=status.HTTP_201_CREATED,
+        message="Form created successfully",
+        data=data,
+    )
 
 
 @form_router.get(
@@ -39,7 +47,14 @@ def list_user_forms(
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ):
-    pass
+    service = FormService(db=db)
+    forms = service.list_user_forms(user_id=current_user.id)
+    data = [schemas.FormListResponseData.model_validate(f) for f in forms]
+    return schemas.FormListResponse(
+        status_code=status.HTTP_200_OK,
+        message="Forms retrieved successfully",
+        data=data,
+    )
 
 
 @form_router.patch(
@@ -55,7 +70,18 @@ def update_form(
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ):
-    pass
+    service = FormService(db=db)
+    form = service.update_form(
+        user_id=current_user.id,
+        form_id=form_id,
+        schema=schema,
+    )
+    data = schemas.FormResponseData.model_validate(form)
+    return schemas.FormResponse(
+        status_code=status.HTTP_200_OK,
+        message="Form updated successfully",
+        data=data,
+    )
 
 
 @form_router.delete(
@@ -70,7 +96,14 @@ def delete_form(
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ):
-    pass
+    service = FormService(db=db)
+    form = service.delete_form(user_id=current_user.id, form_id=form_id)
+    data = schemas.FormResponseData.model_validate(form)
+    return schemas.FormResponse(
+        status_code=status.HTTP_200_OK,
+        message="Form deleted successfully",
+        data=data,
+    )
 
 
 @form_router.get(
@@ -85,7 +118,14 @@ def get_form(
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ):
-    pass
+    service = FormService(db=db)
+    form = service.get_user_form(user_id=current_user.id, form_id=form_id)
+    data = schemas.FormResponseData.model_validate(form)
+    return schemas.FormResponse(
+        status_code=status.HTTP_200_OK,
+        message="Form retrieved successfully",
+        data=data,
+    )
 
 
 @form_router.get(
@@ -99,4 +139,11 @@ def get_public_form(
     form_id: str,
     db: Annotated[Session, Depends(get_db)],
 ):
-    pass
+    service = FormService(db=db)
+    form = service.get_public_form(form_id=form_id)
+    data = schemas.FormResponseData.model_validate(form)
+    return schemas.FormResponse(
+        status_code=status.HTTP_200_OK,
+        message="Form retrieved successfully",
+        data=data,
+    )
