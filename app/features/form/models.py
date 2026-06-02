@@ -35,7 +35,7 @@ class Form(BaseTableModel):
 
     # Define many to one relationship with user
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
-    user: Mapped["User"] = relationship(back_populates="forms")
+    user: Mapped["User"] = relationship(back_populates="forms")  # noqa: F821
 
     def __str__(self) -> str:
         return "Form: {} - [{}]".format(self.title, self.id)

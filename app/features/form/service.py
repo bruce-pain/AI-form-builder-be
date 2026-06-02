@@ -22,7 +22,9 @@ class FormService:
             user_id=user_id,
         )
         created = self.repository.create(form)
-        logger.info("Form created successfully | id: %s | user: %s", created.id, user_id)
+        logger.info(
+            "Form created successfully | id: %s | user: %s", created.id, user_id
+        )
         return created
 
     def list_user_forms(self, user_id: str) -> list[Form]:
@@ -73,9 +75,13 @@ class FormService:
         form = self.repository.get_user_form(user_id, form_id)
         if form:
             self.repository.delete(form.id)
-            logger.info("Form deleted successfully | id: %s | user: %s", form_id, user_id)
+            logger.info(
+                "Form deleted successfully | id: %s | user: %s", form_id, user_id
+            )
         else:
-            logger.info("Form not found, skipping | id: %s | user: %s", form_id, user_id)
+            logger.info(
+                "Form not found, skipping | id: %s | user: %s", form_id, user_id
+            )
 
     def get_public_form(self, form_id: str) -> Form:
         logger.info("Fetching public form | id: %s", form_id)

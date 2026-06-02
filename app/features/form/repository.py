@@ -19,11 +19,7 @@ class FormRepository(BaseRepository[Form]):
         Returns:
             A list of forms belonging to the given user.
         """
-        return (
-            self.db.query(self.model)
-            .filter(self.model.user_id == user_id)
-            .all()
-        )
+        return self.db.query(self.model).filter(self.model.user_id == user_id).all()
 
     def get_user_form(self, user_id: str, form_id: str) -> Optional[Form]:
         """Get a single form that belongs to a specific user.

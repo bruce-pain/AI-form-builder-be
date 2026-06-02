@@ -13,7 +13,7 @@ class User(BaseTableModel):
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     password: Mapped[Optional[str]]
 
-    forms: Mapped[List["Form"]] = relationship(back_populates="user")
+    forms: Mapped[List["Form"]] = relationship(back_populates="user")  # noqa: F821
 
     def __str__(self) -> str:
         return "User: {}".format(self.email)
