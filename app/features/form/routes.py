@@ -86,8 +86,7 @@ def update_form(
 
 @form_router.delete(
     path="/{form_id}",
-    status_code=status.HTTP_200_OK,
-    response_model=schemas.FormResponse,
+    status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a form",
     description="Delete a single form belonging to the authenticated user",
 )
@@ -97,13 +96,7 @@ def delete_form(
     current_user: Annotated[User, Depends(get_current_user)],
 ):
     service = FormService(db=db)
-    form = service.delete_form(user_id=current_user.id, form_id=form_id)
-    data = schemas.FormResponseData.model_validate(form)
-    return schemas.FormResponse(
-        status_code=status.HTTP_200_OK,
-        message="Form deleted successfully",
-        data=data,
-    )
+    service.delete_form(user_id=current_user.id, form_id=form_id)
 
 
 @form_router.get(

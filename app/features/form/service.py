@@ -68,12 +68,14 @@ class FormService:
         logger.info("Form updated successfully | id: %s | user: %s", form_id, user_id)
         return form
 
-    def delete_form(self, user_id: str, form_id: str) -> Form:
+    def delete_form(self, user_id: str, form_id: str) -> None:
         logger.info("Deleting form | id: %s | user: %s", form_id, user_id)
-        form = self.get_user_form(user_id, form_id)
-        self.repository.delete(form.id)
-        logger.info("Form deleted successfully | id: %s | user: %s", form_id, user_id)
-        return form
+        form = self.repository.get_user_form(user_id, form_id)
+        if form:
+            self.repository.delete(form.id)
+            logger.info("Form deleted successfully | id: %s | user: %s", form_id, user_id)
+        else:
+            logger.info("Form not found, skipping | id: %s | user: %s", form_id, user_id)
 
     def get_public_form(self, form_id: str) -> Form:
         logger.info("Fetching public form | id: %s", form_id)
