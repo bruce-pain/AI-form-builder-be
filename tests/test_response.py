@@ -160,9 +160,7 @@ class TestSubmitResponse:
                 }
             ],
         }
-        response = client.post(
-            f"/api/v1/forms/{form_id}/responses", json=payload
-        )
+        response = client.post(f"/api/v1/forms/{form_id}/responses", json=payload)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_submit_response_select_missing_answer(self, client, published_form):
@@ -177,9 +175,7 @@ class TestSubmitResponse:
                 }
             ],
         }
-        response = client.post(
-            f"/api/v1/forms/{form_id}/responses", json=payload
-        )
+        response = client.post(f"/api/v1/forms/{form_id}/responses", json=payload)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_submit_response_text_with_select_answer(self, client, published_form):
@@ -194,9 +190,7 @@ class TestSubmitResponse:
                 }
             ],
         }
-        response = client.post(
-            f"/api/v1/forms/{form_id}/responses", json=payload
-        )
+        response = client.post(f"/api/v1/forms/{form_id}/responses", json=payload)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_submit_response_select_with_text_answer(self, client, published_form):
@@ -211,9 +205,7 @@ class TestSubmitResponse:
                 }
             ],
         }
-        response = client.post(
-            f"/api/v1/forms/{form_id}/responses", json=payload
-        )
+        response = client.post(f"/api/v1/forms/{form_id}/responses", json=payload)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_submit_response_unknown_question(self, client, published_form):
@@ -228,9 +220,7 @@ class TestSubmitResponse:
                 }
             ],
         }
-        response = client.post(
-            f"/api/v1/forms/{form_id}/responses", json=payload
-        )
+        response = client.post(f"/api/v1/forms/{form_id}/responses", json=payload)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_submit_response_wrong_answer_type(self, client, published_form):
@@ -245,9 +235,7 @@ class TestSubmitResponse:
                 }
             ],
         }
-        response = client.post(
-            f"/api/v1/forms/{form_id}/responses", json=payload
-        )
+        response = client.post(f"/api/v1/forms/{form_id}/responses", json=payload)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_submit_response_invalid_select_option(self, client, published_form):
@@ -262,14 +250,10 @@ class TestSubmitResponse:
                 }
             ],
         }
-        response = client.post(
-            f"/api/v1/forms/{form_id}/responses", json=payload
-        )
+        response = client.post(f"/api/v1/forms/{form_id}/responses", json=payload)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-    def test_submit_response_missing_required_question(
-        self, client, published_form
-    ):
+    def test_submit_response_missing_required_question(self, client, published_form):
         form_id = published_form["data"]["id"]
         payload = {
             "answers": [
@@ -281,9 +265,7 @@ class TestSubmitResponse:
                 }
             ],
         }
-        response = client.post(
-            f"/api/v1/forms/{form_id}/responses", json=payload
-        )
+        response = client.post(f"/api/v1/forms/{form_id}/responses", json=payload)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 

@@ -56,9 +56,7 @@ class ResponseService:
             # check if the question_id exists
             if question_id not in form_questions_dict:
                 http_422_error(
-                    detail="Answer references unknown question '{}'".format(
-                        question_id
-                    )
+                    detail="Answer references unknown question '{}'".format(question_id)
                 )
 
             answer_question = form_questions_dict[question_id]

@@ -22,7 +22,10 @@ class FormQuestion(BaseModel):
     @model_validator(mode="after")
     def check_answer_type(self: Self) -> Self:
         if self.answer_type == "select":
-            if self.answer_select_options is None or len(self.answer_select_options) < 1:
+            if (
+                self.answer_select_options is None
+                or len(self.answer_select_options) < 1
+            ):
                 raise ValueError(
                     "answer_select_options is required when answer_type is 'select'"
                 )

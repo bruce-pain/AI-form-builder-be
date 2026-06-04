@@ -29,9 +29,7 @@ class ResponseAnswer(BaseModel):
                 )
         elif self.answer_type == "text":
             if self.text_answer is None or len(self.text_answer) < 1:
-                raise ValueError(
-                    "text_answer is required when answer_type is 'text'"
-                )
+                raise ValueError("text_answer is required when answer_type is 'text'")
             elif self.select_answer is not None:
                 raise ValueError(
                     "select_answer must be None when answer_type is 'text'"
