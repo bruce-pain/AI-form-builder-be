@@ -19,6 +19,7 @@ class FormUpdateRequest(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     questions: Optional[List[FormQuestion]] = None
+    is_published: Optional[bool] = None
 
 
 class FormResponseData(BaseModel):
