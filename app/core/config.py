@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     DATABASE_NAME: str
     DATABASE_TYPE: str
 
+    # Test Database configurations
+    TEST_DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/test_db"
+
     # Directories
     MEDIA_DIR: str = os.path.join(BASE_DIR, "media")
     STATIC_DIR: str = os.path.join(BASE_DIR, "static")
