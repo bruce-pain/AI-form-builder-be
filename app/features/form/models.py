@@ -37,7 +37,7 @@ class Form(BaseTableModel):
     user: Mapped["User"] = relationship(back_populates="forms")  # noqa: F821
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
 
-    reponses: Mapped[List["Response"]] = relationship(back_populates="form")
+    responses: Mapped[List["Response"]] = relationship(back_populates="form")
 
     def __str__(self) -> str:
         return "Form: {} - [{}]".format(self.title, self.id)
