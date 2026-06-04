@@ -114,7 +114,9 @@ def created_response(client, published_form, sample_response_data):
 
 
 class TestSubmitResponse:
-    def test_submit_response_success(self, client, published_form, sample_response_data):
+    def test_submit_response_success(
+        self, client, published_form, sample_response_data
+    ):
         form_id = published_form["data"]["id"]
         response = client.post(
             f"/api/v1/forms/{form_id}/responses", json=sample_response_data
@@ -125,7 +127,9 @@ class TestSubmitResponse:
         assert data["data"]["form_id"] == form_id
         assert len(data["data"]["answers"]) == 2
 
-    def test_submit_response_form_not_published(self, client, created_form, sample_response_data):
+    def test_submit_response_form_not_published(
+        self, client, created_form, sample_response_data
+    ):
         form_id = created_form["data"]["id"]
         response = client.post(
             f"/api/v1/forms/{form_id}/responses", json=sample_response_data
@@ -141,9 +145,7 @@ class TestSubmitResponse:
 
     def test_submit_response_missing_answers(self, client, published_form):
         form_id = published_form["data"]["id"]
-        response = client.post(
-            f"/api/v1/forms/{form_id}/responses", json={}
-        )
+        response = client.post(f"/api/v1/forms/{form_id}/responses", json={})
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -172,7 +174,9 @@ class TestListResponses:
         response = client.get(f"/api/v1/forms/{form_id}/responses")
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_list_responses_other_user(self, client, other_auth_headers, created_response):
+    def test_list_responses_other_user(
+        self, client, other_auth_headers, created_response
+    ):
         form_id = created_response["data"]["form_id"]
         response = client.get(
             f"/api/v1/forms/{form_id}/responses", headers=other_auth_headers
@@ -204,12 +208,12 @@ class TestGetResponse:
     def test_get_response_unauthorized(self, client, created_response):
         form_id = created_response["data"]["form_id"]
         response_id = created_response["data"]["id"]
-        response = client.get(
-            f"/api/v1/forms/{form_id}/responses/{response_id}"
-        )
+        response = client.get(f"/api/v1/forms/{form_id}/responses/{response_id}")
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_get_response_other_user(self, client, other_auth_headers, created_response):
+    def test_get_response_other_user(
+        self, client, other_auth_headers, created_response
+    ):
         form_id = created_response["data"]["form_id"]
         response_id = created_response["data"]["id"]
         response = client.get(

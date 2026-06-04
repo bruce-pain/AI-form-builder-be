@@ -66,7 +66,9 @@ def created_form(client, auth_headers, sample_form_data):
 
 class TestCreateForm:
     def test_create_form_success(self, client, auth_headers, sample_form_data):
-        response = client.post("/api/v1/forms", json=sample_form_data, headers=auth_headers)
+        response = client.post(
+            "/api/v1/forms", json=sample_form_data, headers=auth_headers
+        )
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
         assert data["message"] == "Form created successfully"
@@ -209,7 +211,9 @@ class TestUpdateForm:
         assert response.status_code == status.HTTP_200_OK
         assert response.json()["data"]["is_published"] is True
 
-    def test_update_form_other_user(self, client, auth_headers, created_form, second_user):
+    def test_update_form_other_user(
+        self, client, auth_headers, created_form, second_user
+    ):
         other_headers = {"Authorization": f"Bearer {second_user['access_token']}"}
         form_id = created_form["data"]["id"]
         payload = {"title": "Hacked"}
@@ -234,19 +238,21 @@ class TestDeleteForm:
         response = client.delete(f"/api/v1/forms/{form_id}")
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_delete_form_other_user(self, client, auth_headers, created_form, second_user):
+    def test_delete_form_other_user(
+        self, client, auth_headers, created_form, second_user
+    ):
         other_headers = {"Authorization": f"Bearer {second_user['access_token']}"}
         form_id = created_form["data"]["id"]
-        response = client.delete(
-            f"/api/v1/forms/{form_id}", headers=other_headers
-        )
+        response = client.delete(f"/api/v1/forms/{form_id}", headers=other_headers)
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
 class TestGetPublicForm:
     @pytest.fixture
     def published_form(self, client, auth_headers, sample_form_data):
-        response = client.post("/api/v1/forms", json=sample_form_data, headers=auth_headers)
+        response = client.post(
+            "/api/v1/forms", json=sample_form_data, headers=auth_headers
+        )
         assert response.status_code == status.HTTP_201_CREATED
         form_id = response.json()["data"]["id"]
         response = client.patch(

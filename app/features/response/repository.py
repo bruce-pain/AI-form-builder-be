@@ -21,15 +21,9 @@ class ResponseRepository(BaseRepository[Response]):
         Returns:
             A list of responses belonging to the given form.
         """
-        return (
-            self.db.query(self.model)
-            .filter(self.model.form_id == form_id)
-            .all()
-        )
+        return self.db.query(self.model).filter(self.model.form_id == form_id).all()
 
-    def get_form_response(
-        self, form_id: str, response_id: str
-    ) -> Optional[Response]:
+    def get_form_response(self, form_id: str, response_id: str) -> Optional[Response]:
         """Get a single response for a specific form.
 
         Args:
