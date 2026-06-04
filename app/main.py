@@ -69,7 +69,7 @@ async def probe():
 async def http_exception(request: Request, exc: HTTPException):
     """HTTP exception handler"""
 
-    logger.error(f"HTTP Exception occured; {exc}")
+    logger.error("HTTP Exception occured; %s", exc)
 
     return JSONResponse(
         status_code=exc.status_code,
@@ -90,7 +90,7 @@ async def validation_exception(request: Request, exc: RequestValidationError):
         for error in exc.errors()
     ]
 
-    logger.error(f"Validation Exception occured; {errors}")
+    logger.error("Validation Exception occured; %s", errors)
 
     return JSONResponse(
         status_code=422,
@@ -107,7 +107,7 @@ async def validation_exception(request: Request, exc: RequestValidationError):
 async def integrity_exception(request: Request, exc: IntegrityError):
     """Integrity error exception handlers"""
 
-    logger.error(f"Integrity Exception occured; {exc}")
+    logger.error("Integrity Exception occured; %s", exc)
 
     return JSONResponse(
         status_code=400,
@@ -123,7 +123,7 @@ async def integrity_exception(request: Request, exc: IntegrityError):
 async def exception(request: Request, exc: Exception):
     """Other exception handlers"""
 
-    logger.error(f"Exception occured; {exc}")
+    logger.error("Exception occured; %s", exc)
 
     return JSONResponse(
         status_code=500,
@@ -139,7 +139,7 @@ async def exception(request: Request, exc: Exception):
 async def custom_rate_limit_handler(request: Request, exc: RateLimitExceeded):
     """Rate limit exceeded exception handler"""
 
-    logger.error(f"Rate limit exceeded! {exc}")
+    logger.error("Rate limit exceeded! %s", exc)
 
     return JSONResponse(
         status_code=429,

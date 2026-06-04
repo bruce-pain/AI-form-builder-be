@@ -26,7 +26,7 @@ def get_db():
     try:
         yield db
     except Exception as e:
-        logger.error(f"Database Error: {e}")
+        logger.error("Database Error: %s", e)
         raise
     finally:
         db.close()

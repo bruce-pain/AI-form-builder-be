@@ -23,7 +23,7 @@ class UserService:
 
         user = User(**schema.model_dump())
 
-        logger.info(f"Creating user with email: {user.email}")
+        logger.info("Creating user with email: %s", user.email)
         return self.repository.create(user)
 
     def authenticate(self, schema: auth_schemas.LoginRequest) -> User:
@@ -41,5 +41,5 @@ class UserService:
                 detail="Invalid password",
             )
 
-        logger.info(f"User authenticated with email: {user.email}")
+        logger.info("User authenticated with email: %s", user.email)
         return user
