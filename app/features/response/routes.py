@@ -49,7 +49,7 @@ def list_form_responses(
     current_user: Annotated[User, Depends(get_current_user)],
 ):
     service = ResponseService(db=db)
-    responses = service.get_form_responses(form_id=form_id)
+    responses = service.get_form_responses(form_id=form_id, user_id=current_user.id)
     data = [schemas.ResponseData.model_validate(r) for r in responses]
     return schemas.ResponseListResponse(
         status_code=status.HTTP_200_OK,
@@ -72,7 +72,9 @@ def get_form_response(
     current_user: Annotated[User, Depends(get_current_user)],
 ):
     service = ResponseService(db=db)
-    response = service.get_form_response(form_id=form_id, response_id=response_id)
+    response = service.get_form_response(
+        form_id=form_id, response_id=response_id, user_id=current_user.id
+    )
     data = schemas.ResponseData.model_validate(response)
     return schemas.ResponseResponse(
         status_code=status.HTTP_200_OK,
