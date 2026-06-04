@@ -1,12 +1,15 @@
 """Response service"""
 
+from typing import List, cast
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.logger import logger
+from app.features.form.models import FormQuestion
 from app.features.form.repository import FormRepository
 from app.features.response import schemas
-from app.features.response.models import Response
+from app.features.response.models import Response, ResponseAnswer
 from app.features.response.repository import ResponseRepository
 
 
@@ -14,6 +17,91 @@ class ResponseService:
     def __init__(self, db: Session):
         self.repository = ResponseRepository(db)
         self.form_repository = FormRepository(db)
+
+    @staticmethod
+    def _validate_answers(
+        form_questions: List[FormQuestion], answers: List[ResponseAnswer]
+    ) -> List[ResponseAnswer]:
+        logger.info(
+            "Validating %d answers against %d form questions",
+            len(answers),
+            len(form_questions),
+        )
+
+        def http_422_error(detail: str) -> None:
+            """reusable function to throw 422 exception responses"""
+            logger.warning("Answer validation failed: %s", detail)
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=detail
+            )
+
+        # create a map of questions with their id as the key
+        form_questions_dict: dict[str, FormQuestion] = {}
+
+        # use this later to check if required questions were answered
+        required_question_ids: List[str] = []
+        answered_question_ids: List[str] = []
+        missing_required_question_ids: List[str] = []
+
+        for question in form_questions:
+            form_questions_dict[question.id] = question
+
+            if question.required:
+                required_question_ids.append(question.id)
+
+        # checks to be performed per answer
+        for answer in answers:
+            question_id = answer.question_id
+
+            # check if the question_id exists
+            if question_id not in form_questions_dict:
+                http_422_error(
+                    detail="Answer references unknown question '{}'".format(
+                        question_id
+                    )
+                )
+
+            answer_question = form_questions_dict[question_id]
+
+            # check if the answer_type matches the question's answer type
+            if answer.answer_type != answer_question.answer_type:
+                http_422_error(
+                    detail="Invalid answer type for question '{}': expected '{}', got '{}'".format(
+                        question_id, answer_question.answer_type, answer.answer_type
+                    )
+                )
+
+            # check if answer type is select
+            if answer.answer_type == "select":
+                # check if the selected answer is in the questions options
+
+                # cast answer.select_answer to List[str] so the Type Checker can shut up
+                select_answer = cast(List[str], answer.select_answer)
+                select_options = cast(List[str], answer_question.answer_select_options)
+                for option in select_answer:
+                    if option not in select_options:
+                        http_422_error(
+                            detail="Invalid option '{}' for question '{}': expected one of [{}]".format(
+                                option, question_id, ", ".join(select_options)
+                            )
+                        )
+
+            answered_question_ids.append(question_id)
+
+        # check required questions
+        for question in required_question_ids:
+            if question not in answered_question_ids:
+                missing_required_question_ids.append(question)
+
+        if len(missing_required_question_ids) > 0:
+            http_422_error(
+                detail="Required questions left unanswered: {}".format(
+                    ", ".join(missing_required_question_ids)
+                )
+            )
+
+        logger.info("Answer validation passed for %d answers", len(answers))
+        return answers
 
     def submit(self, form_id: str, schema: schemas.ResponseCreateRequest) -> Response:
         logger.info("Submitting response for form: %s", form_id)
@@ -26,7 +114,13 @@ class ResponseService:
                 detail="Form not found or not published",
             )
 
-        response = Response(form_id=form_id, answers=schema.answers)
+        form_questions = cast(List[FormQuestion], form.questions)
+
+        validated_answers = self._validate_answers(
+            form_questions=form_questions, answers=schema.answers
+        )
+
+        response = Response(form_id=form_id, answers=validated_answers)
         created = self.repository.create(response)
         logger.info(
             "Response submitted successfully | id: %s | form: %s", created.id, form_id

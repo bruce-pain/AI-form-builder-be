@@ -1,8 +1,8 @@
 """Form data model"""
 
-from typing import List, Literal, Optional
+from typing import Annotated, List, Literal, Optional, Self
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -12,12 +12,35 @@ from app.core.base.types import PydanticType
 
 # Define the question schema, use pydantic for validation
 class FormQuestion(BaseModel):
-    id: str
-    text: str
+    id: Annotated[str, Field(min_length=1)]
+    text: Annotated[str, Field(min_length=1, max_length=500)]
     answer_type: Literal["text", "select"]
     answer_select_options: Optional[List[str]]
     answer_select_multiple: Optional[bool]
     required: bool
+
+    @model_validator(mode="after")
+    def check_answer_type(self: Self) -> Self:
+        if self.answer_type == "select":
+            if self.answer_select_options is None or len(self.answer_select_options) < 1:
+                raise ValueError(
+                    "answer_select_options is required when answer_type is 'select'"
+                )
+            elif self.answer_select_multiple is None:
+                raise ValueError(
+                    "answer_select_multiple is required when answer_type is 'select'"
+                )
+        elif self.answer_type == "text":
+            if self.answer_select_options is not None:
+                raise ValueError(
+                    "answer_select_options must be None when answer_type is 'text'"
+                )
+            elif self.answer_select_multiple is not None:
+                raise ValueError(
+                    "answer_select_multiple must be None when answer_type is 'text'"
+                )
+
+        return self
 
 
 class Form(BaseTableModel):

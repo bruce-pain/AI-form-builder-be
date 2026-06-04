@@ -97,6 +97,70 @@ class TestCreateForm:
         response = client.post("/api/v1/forms", json=sample_form_data)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
+    def test_create_form_empty_title(self, client, auth_headers):
+        payload = {"title": "", "description": "desc"}
+        response = client.post("/api/v1/forms", json=payload, headers=auth_headers)
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+    def test_create_form_empty_description(self, client, auth_headers):
+        payload = {"title": "Title", "description": ""}
+        response = client.post("/api/v1/forms", json=payload, headers=auth_headers)
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+    def test_create_form_question_empty_text(self, client, auth_headers):
+        payload = {
+            "title": "Title",
+            "description": "desc",
+            "questions": [
+                {
+                    "id": "q1",
+                    "text": "",
+                    "answer_type": "text",
+                    "answer_select_options": None,
+                    "answer_select_multiple": None,
+                    "required": False,
+                }
+            ],
+        }
+        response = client.post("/api/v1/forms", json=payload, headers=auth_headers)
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+    def test_create_form_select_type_missing_options(self, client, auth_headers):
+        payload = {
+            "title": "Title",
+            "description": "desc",
+            "questions": [
+                {
+                    "id": "q1",
+                    "text": "Pick one",
+                    "answer_type": "select",
+                    "answer_select_options": None,
+                    "answer_select_multiple": None,
+                    "required": False,
+                }
+            ],
+        }
+        response = client.post("/api/v1/forms", json=payload, headers=auth_headers)
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+    def test_create_form_text_type_with_options(self, client, auth_headers):
+        payload = {
+            "title": "Title",
+            "description": "desc",
+            "questions": [
+                {
+                    "id": "q1",
+                    "text": "Your name",
+                    "answer_type": "text",
+                    "answer_select_options": ["A"],
+                    "answer_select_multiple": None,
+                    "required": False,
+                }
+            ],
+        }
+        response = client.post("/api/v1/forms", json=payload, headers=auth_headers)
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
 
 class TestListForms:
     def test_list_forms_empty(self, client, auth_headers):

@@ -1,24 +1,24 @@
 """Form request/response schemas"""
 
 from datetime import datetime
-from typing import List, Optional
+from typing import Annotated, List, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.base.schema import BaseResponseModel
 from app.features.form.models import FormQuestion
 
 
 class FormCreateRequest(BaseModel):
-    title: str
-    description: str
-    questions: Optional[List[FormQuestion]] = None
+    title: Annotated[str, Field(min_length=1, max_length=255)]
+    description: Annotated[str, Field(min_length=1, max_length=2000)]
+    questions: Optional[List[FormQuestion]] = Field(default=None, min_length=1)
 
 
 class FormUpdateRequest(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    questions: Optional[List[FormQuestion]] = None
+    title: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    description: Optional[str] = Field(default=None, min_length=1, max_length=2000)
+    questions: Optional[List[FormQuestion]] = Field(default=None, min_length=1)
     is_published: Optional[bool] = None
 
 

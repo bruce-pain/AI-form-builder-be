@@ -65,6 +65,16 @@ class FormService:
         )
         for key, value in update_data.items():
             setattr(form, key, value)
+
+        # check if is_published is set to true
+        # and make sure questions list is not empty
+
+        if form.is_published and not form.questions:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Form cannot be published with no questions",
+            )
+
         self.repository.db.commit()
         self.repository.db.refresh(form)
         logger.info("Form updated successfully | id: %s | user: %s", form_id, user_id)
