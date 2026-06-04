@@ -9,11 +9,11 @@ from app.core.base.schema import BaseResponseModel
 from app.features.response.models import ResponseAnswer
 
 
-class ResponseCreateRequest(BaseModel):
+class FormResponseCreateRequest(BaseModel):
     answers: List[ResponseAnswer]
 
 
-class ResponseData(BaseModel):
+class FormResponseData(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -23,9 +23,9 @@ class ResponseData(BaseModel):
     updated_at: datetime
 
 
-class ResponseResponse(BaseResponseModel):
-    data: ResponseData
+class FormResponseResponse(BaseResponseModel):
+    data: FormResponseData
 
 
-class ResponseListResponse(BaseResponseModel):
-    data: List[ResponseData]
+class FormResponseListResponse(BaseResponseModel):
+    data: List[FormResponseData]

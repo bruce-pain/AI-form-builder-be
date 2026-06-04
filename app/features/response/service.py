@@ -101,7 +101,9 @@ class ResponseService:
         logger.info("Answer validation passed for %d answers", len(answers))
         return answers
 
-    def submit(self, form_id: str, schema: schemas.ResponseCreateRequest) -> Response:
+    def submit(
+        self, form_id: str, schema: schemas.FormResponseCreateRequest
+    ) -> Response:
         logger.info("Submitting response for form: %s", form_id)
 
         form = self.form_repository.get_public_form(form_id)
