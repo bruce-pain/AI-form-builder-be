@@ -182,3 +182,4 @@ alembic/versions/*py
 posting-collection/
 posting-dev.env
 .env.backup
+PROGRESS.md
