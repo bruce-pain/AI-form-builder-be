@@ -100,6 +100,27 @@ def delete_form(
 
 
 @form_router.get(
+    path="/public/{form_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=schemas.FormResponse,
+    summary="Get a public form",
+    description="Get a single published form (no authentication required)",
+)
+def get_public_form(
+    form_id: str,
+    db: Annotated[Session, Depends(get_db)],
+):
+    service = FormService(db=db)
+    form = service.get_public_form(form_id=form_id)
+    data = schemas.FormResponseData.model_validate(form)
+    return schemas.FormResponse(
+        status_code=status.HTTP_200_OK,
+        message="Form retrieved successfully",
+        data=data,
+    )
+
+
+@form_router.get(
     path="/{form_id}",
     status_code=status.HTTP_200_OK,
     response_model=schemas.FormResponse,
@@ -113,27 +134,6 @@ def get_form(
 ):
     service = FormService(db=db)
     form = service.get_user_form(user_id=current_user.id, form_id=form_id)
-    data = schemas.FormResponseData.model_validate(form)
-    return schemas.FormResponse(
-        status_code=status.HTTP_200_OK,
-        message="Form retrieved successfully",
-        data=data,
-    )
-
-
-@form_router.get(
-    path="/public/{form_id}",
-    status_code=status.HTTP_200_OK,
-    response_model=schemas.FormResponse,
-    summary="Get a public form",
-    description="Get a single published form (no authentication required)",
-)
-def get_public_form(
-    form_id: str,
-    db: Annotated[Session, Depends(get_db)],
-):
-    service = FormService(db=db)
-    form = service.get_public_form(form_id=form_id)
     data = schemas.FormResponseData.model_validate(form)
     return schemas.FormResponse(
         status_code=status.HTTP_200_OK,
