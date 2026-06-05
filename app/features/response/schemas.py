@@ -20,7 +20,6 @@ class FormResponseData(BaseModel):
     answers: List[ResponseAnswer]
     form_id: str
     created_at: datetime
-    updated_at: datetime
 
 
 class FormResponseResponse(BaseResponseModel):

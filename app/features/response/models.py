@@ -47,3 +47,5 @@ class Response(BaseTableModel):
 
     form: Mapped["Form"] = relationship(back_populates="responses")  # noqa: F821
     form_id: Mapped[str] = mapped_column(ForeignKey("forms.id"))
+
+    updated_at = None
