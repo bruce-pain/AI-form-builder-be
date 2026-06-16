@@ -15,8 +15,8 @@ class FormQuestion(BaseModel):
     id: Annotated[str, Field(min_length=1)]
     text: Annotated[str, Field(min_length=1, max_length=500)]
     answer_type: Literal["text", "select"]
-    answer_select_options: Optional[List[str]]
-    answer_select_multiple: Optional[bool]
+    answer_select_options: Optional[List[str]] = None
+    answer_select_multiple: Optional[bool] = None
     required: bool
 
     @model_validator(mode="after")
