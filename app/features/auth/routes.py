@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.dependencies.security import get_current_user
 from app.features.auth import schemas
-from app.features.auth.utils.jwt import create_jwt_token, refresh_access_token
 from app.features.auth.models import User
 from app.features.auth.service import UserService
+from app.features.auth.utils.jwt import create_jwt_token, refresh_access_token
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -81,13 +81,16 @@ def login(
     description="This endpoint uses the current refresh token to create new access and refresh tokens",
     tags=["Authentication"],
 )
-def refresh_token(schema: schemas.TokenRefreshRequest):
-    token = refresh_access_token(refresh_token=schema.refresh_token)
+def refresh_tokens(schema: schemas.TokenRefreshRequest):
+    access_token, refresh_token = refresh_access_token(
+        refresh_token=schema.refresh_token
+    )
 
     return schemas.TokenRefreshResponse(
         status_code=status.HTTP_200_OK,
         message="Access token refreshed successfully",
-        access_token=token,
+        access_token=access_token,
+        refresh_token=refresh_token,
     )
 
 

@@ -1,5 +1,5 @@
 from datetime import UTC, datetime, timedelta
-from typing import Optional
+from typing import Literal, Tuple
 
 from fastapi import HTTPException
 from jose import JWTError, jwt
@@ -8,7 +8,7 @@ from app.core import response_messages
 from app.core.config import settings
 
 
-def create_jwt_token(token_type: str, user_id: str) -> str:
+def create_jwt_token(token_type: Literal["access", "refresh"], user_id: str) -> str:
     expiry_period = {
         "access": settings.ACCESS_TOKEN_EXPIRY,
         "refresh": settings.REFRESH_TOKEN_EXPIRY,
@@ -39,7 +39,7 @@ def verify_jwt_token(token: str, credentials_exception: HTTPException) -> str:
     return user_id
 
 
-def refresh_access_token(refresh_token: str) -> Optional[str]:
+def refresh_access_token(refresh_token: str) -> Tuple[str, str]:
     credentials_exception = HTTPException(
         status_code=401, detail=response_messages.EXPIRED_REFRESH_TOKEN
     )
@@ -48,6 +48,6 @@ def refresh_access_token(refresh_token: str) -> Optional[str]:
         token=refresh_token, credentials_exception=credentials_exception
     )
 
-    if user_id:
-        new_access_token = create_jwt_token("access", user_id=user_id)
-        return new_access_token
+    new_access_token = create_jwt_token("access", user_id=user_id)
+    new_refresh_token = create_jwt_token("refresh", user_id=user_id)
+    return (new_access_token, new_refresh_token)
