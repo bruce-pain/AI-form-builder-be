@@ -13,8 +13,8 @@ from app.core.base.types import PydanticType
 class ResponseAnswer(BaseModel):
     question_id: Annotated[str, Field(min_length=1)]
     answer_type: Literal["text", "select"]
-    text_answer: Optional[str]
-    select_answer: Optional[List[str]]
+    text_answer: Optional[str] = None
+    select_answer: Optional[List[str]] = None
 
     @model_validator(mode="after")
     def check_answer_type(self: Self) -> Self:
