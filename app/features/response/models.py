@@ -1,8 +1,8 @@
 """Response data model"""
 
-from typing import Annotated, List, Literal, Optional, Self
+from typing import Annotated, List, Literal, Optional
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -15,27 +15,6 @@ class ResponseAnswer(BaseModel):
     answer_type: Literal["text", "select"]
     text_answer: Optional[str] = None
     select_answer: Optional[List[str]] = None
-
-    @model_validator(mode="after")
-    def check_answer_type(self: Self) -> Self:
-        if self.answer_type == "select":
-            if self.select_answer is None or len(self.select_answer) < 1:
-                raise ValueError(
-                    "select_answer is required when answer_type is 'select'"
-                )
-            elif self.text_answer is not None:
-                raise ValueError(
-                    "text_answer must be None when answer_type is 'select'"
-                )
-        elif self.answer_type == "text":
-            if self.text_answer is None or len(self.text_answer) < 1:
-                raise ValueError("text_answer is required when answer_type is 'text'")
-            elif self.select_answer is not None:
-                raise ValueError(
-                    "select_answer must be None when answer_type is 'text'"
-                )
-
-        return self
 
 
 class Response(BaseTableModel):

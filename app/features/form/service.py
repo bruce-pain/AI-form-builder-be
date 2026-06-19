@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.core.logger import logger
 from app.features.form import schemas
-from app.features.form.models import Form
+from app.features.form.models import Form, FormQuestion
 from app.features.form.repository import FormRepository
 
 
@@ -18,7 +18,11 @@ class FormService:
         form = Form(
             title=schema.title,
             description=schema.description,
-            questions=schema.questions,
+            questions=(
+                [FormQuestion.model_validate(q) for q in schema.questions]
+                if schema.questions is not None
+                else None
+            ),
             user_id=user_id,
         )
         created = self.repository.create(form)

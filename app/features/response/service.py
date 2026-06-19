@@ -117,7 +117,8 @@ class ResponseService:
         form_questions = cast(List[FormQuestion], form.questions)
 
         validated_answers = self._validate_answers(
-            form_questions=form_questions, answers=schema.answers
+            form_questions=form_questions,
+            answers=[ResponseAnswer.model_validate(a) for a in schema.answers],
         )
 
         response = Response(form_id=form_id, answers=validated_answers)
