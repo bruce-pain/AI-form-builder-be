@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     # Test Database configurations
     TEST_DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/test_db"
 
+    # groq api key
+    GROQ_API_KEY: str
+
     # Directories
     MEDIA_DIR: str = os.path.join(BASE_DIR, "media")
     STATIC_DIR: str = os.path.join(BASE_DIR, "static")
