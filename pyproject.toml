@@ -17,6 +17,7 @@ dependencies = [
     "pydantic-settings>=2.7.0,<3",
     "uuid7>=0.1.0,<0.2",
     "slowapi>=0.1.0,<0.2",
+    "groq>=1.4.0",
 ]
 
 [dependency-groups]
