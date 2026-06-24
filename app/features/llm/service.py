@@ -9,6 +9,7 @@ from groq import (
     APIStatusError,
     APITimeoutError,
     AuthenticationError,
+    Groq,
     RateLimitError,
 )
 from groq.types.chat import ChatCompletionMessageParam
@@ -20,6 +21,9 @@ from app.features.llm.schemas import FormQuestionList
 
 
 class LLMService:
+    def __init__(self, groq_client: Groq) -> None:
+        self.groq_client = groq_client
+
     def generate(self, user_prompt: str) -> FormQuestionList:
         if not user_prompt:
             logger.warning("LLM generation attempted with empty prompt")
@@ -36,18 +40,18 @@ class LLMService:
         ]
 
         try:
-            llm_response = run_inference(conversation)
-        except APIConnectionError:
-            logger.error("Groq API connection error")
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="LLM service unavailable",
-            )
+            llm_response = run_inference(self.groq_client, conversation)
         except APITimeoutError:
             logger.error("Groq API request timed out")
             raise HTTPException(
                 status_code=status.HTTP_504_GATEWAY_TIMEOUT,
                 detail="LLM request timed out",
+            )
+        except APIConnectionError:
+            logger.error("Groq API connection error")
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="LLM service unavailable",
             )
         except RateLimitError:
             logger.error("Groq API rate limit exceeded")

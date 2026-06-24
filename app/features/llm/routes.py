@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
 from app.core.dependencies.security import get_current_user
+from app.core.groq import client as groq_client
 from app.features.auth.models import User
 from app.features.llm import schemas
 from app.features.llm.service import LLMService
@@ -23,7 +24,7 @@ def generate_questions(
     schema: schemas.LLMRequest,
     current_user: Annotated[User, Depends(get_current_user)],
 ):
-    service = LLMService()
+    service = LLMService(groq_client)
     result = service.generate(user_prompt=schema.prompt)
     return schemas.LLMResponse(
         status_code=status.HTTP_200_OK,

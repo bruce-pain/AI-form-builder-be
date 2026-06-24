@@ -9,10 +9,8 @@ from groq.types.chat import (
     ChatCompletionMessageParam,
 )
 
-from app.core.config import settings
 from app.features.llm.schemas import FormQuestionList
 
-client = Groq(api_key=settings.GROQ_API_KEY)
 GROQ_MODEL = "openai/gpt-oss-120b"
 
 SYSTEM_PROMPT = """
@@ -36,6 +34,7 @@ SYSTEM_PROMPT = """
 
 
 def run_inference(
+    client: Groq,
     conversation_history: List[ChatCompletionMessageParam],
 ) -> ChatCompletionMessage:
     completion = client.chat.completions.create(
