@@ -3,7 +3,7 @@
 import json
 from typing import List, Optional
 
-from groq import Groq
+from groq import AsyncGroq
 from groq.types.chat import (
     ChatCompletionMessage,
     ChatCompletionMessageParam,
@@ -16,8 +16,11 @@ GROQ_MODEL = "openai/gpt-oss-120b"
 SYSTEM_PROMPT = """
     You are an expert at designing form questions for data collection.
 
-    Given a user's request, generate an appropriate list of form questions.
-    Use the provided JSON schema for the output.
+    You will receive an existing form state (a list of questions) and a new
+    instruction from the user. Modify the existing form state to satisfy the
+    new instruction — add, remove, or change questions as needed. Only generate
+    a brand new form from scratch if the current state is empty or the
+    instruction explicitly asks for one.
 
     Rules:
     - Each question has an id (q1, q2, q3, ...) that defines display order and must start from q1.
@@ -33,11 +36,11 @@ SYSTEM_PROMPT = """
 """
 
 
-def run_inference(
-    client: Groq,
+async def run_inference(
+    client: AsyncGroq,
     conversation_history: List[ChatCompletionMessageParam],
 ) -> ChatCompletionMessage:
-    completion = client.chat.completions.create(
+    completion = await client.chat.completions.create(
         model=GROQ_MODEL,
         messages=conversation_history,
         max_completion_tokens=1024,

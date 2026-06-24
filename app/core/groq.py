@@ -1,4 +1,4 @@
-from groq import Groq
+from groq import AsyncGroq
 from app.core.config import settings
 
-client = Groq(api_key=settings.GROQ_API_KEY)
+client = AsyncGroq(api_key=settings.GROQ_API_KEY)

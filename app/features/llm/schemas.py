@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -12,7 +12,10 @@ class FormQuestionList(BaseModel):
 
 class LLMRequest(BaseModel):
     prompt: str
+    conversation_id: Optional[str] = None
+    current_state: Optional[FormQuestionList] = None
 
 
 class LLMResponse(BaseResponseModel):
     data: FormQuestionList
+    conversation_id: str

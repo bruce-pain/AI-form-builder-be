@@ -1,7 +1,7 @@
 """LLM service"""
 
 import json
-from typing import List
+from typing import List, Optional
 
 from fastapi import HTTPException, status
 from groq import (
@@ -9,11 +9,13 @@ from groq import (
     APIStatusError,
     APITimeoutError,
     AuthenticationError,
-    Groq,
+    AsyncGroq,
     RateLimitError,
 )
 from groq.types.chat import ChatCompletionMessageParam
 from pydantic import ValidationError
+from redis.asyncio import Redis
+from uuid_extensions import uuid7
 
 from app.core.logger import logger
 from app.features.llm.groq_utils import SYSTEM_PROMPT, parse_message, run_inference
@@ -21,10 +23,17 @@ from app.features.llm.schemas import FormQuestionList
 
 
 class LLMService:
-    def __init__(self, groq_client: Groq) -> None:
+    def __init__(self, groq_client: AsyncGroq, redis_client: Redis, user_id: str) -> None:
         self.groq_client = groq_client
+        self.redis = redis_client
+        self.user_id = user_id
 
-    def generate(self, user_prompt: str) -> FormQuestionList:
+    async def generate(
+        self,
+        user_prompt: str,
+        conversation_id: Optional[str] = None,
+        current_state: Optional[FormQuestionList] = None,
+    ) -> tuple[str, FormQuestionList]:
         if not user_prompt:
             logger.warning("LLM generation attempted with empty prompt")
             raise HTTPException(
@@ -32,15 +41,43 @@ class LLMService:
                 detail="Can't send empty prompt",
             )
 
-        logger.info("Generating form questions | prompt: %.80s", user_prompt)
+        if not conversation_id:
+            conversation_id = str(uuid7())
+
+        logger.info(
+            "Generating form questions | conv: %s | prompt: %.80s",
+            conversation_id,
+            user_prompt,
+        )
+
+        redis_key = f"conversation:{self.user_id}:{conversation_id}"
+
+        prior_prompts = []
+        try:
+            prior_prompts = await self.redis.lrange(redis_key, 0, -1)
+        except Exception:
+            logger.warning("Failed to read Redis key %s, starting fresh", redis_key)
+
+        lines: List[str] = []
+        if prior_prompts:
+            lines.append("Prior instructions (already applied):")
+            for i, p in enumerate(prior_prompts, 1):
+                lines.append(f'{i}. "{p}"')
+            lines.append("")
+
+        lines.append(f"Current form state: {current_state.model_dump_json() if current_state else 'None'}")
+        lines.append("")
+        lines.append(f"New instruction: {user_prompt}")
+
+        user_message = "\n".join(lines)
 
         conversation: List[ChatCompletionMessageParam] = [
             {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
+            {"role": "user", "content": user_message},
         ]
 
         try:
-            llm_response = run_inference(self.groq_client, conversation)
+            llm_response = await run_inference(self.groq_client, conversation)
         except APITimeoutError:
             logger.error("Groq API request timed out")
             raise HTTPException(
@@ -88,9 +125,16 @@ class LLMService:
                 detail="Error generating result",
             )
 
+        try:
+            await self.redis.rpush(redis_key, user_prompt)
+            await self.redis.expire(redis_key, 1800)
+        except Exception:
+            logger.warning("Failed to persist conversation to Redis")
+
         logger.info(
-            "Form questions generated successfully | questions: %d",
+            "Form questions generated successfully | conv: %s | questions: %d",
+            conversation_id,
             len(result.questions),
         )
 
-        return result
+        return conversation_id, result

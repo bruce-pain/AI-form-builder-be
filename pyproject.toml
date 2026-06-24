@@ -18,6 +18,7 @@ dependencies = [
     "uuid7>=0.1.0,<0.2",
     "slowapi>=0.1.0,<0.2",
     "groq>=1.4.0",
+    "redis>=8.0.1",
 ]
 
 [dependency-groups]

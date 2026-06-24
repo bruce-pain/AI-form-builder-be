@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     # groq api key
     GROQ_API_KEY: str
 
+    # Redis configuration
+    REDIS_URL: str = "redis://localhost:6379/0"
+
     # Directories
     MEDIA_DIR: str = os.path.join(BASE_DIR, "media")
     STATIC_DIR: str = os.path.join(BASE_DIR, "static")
