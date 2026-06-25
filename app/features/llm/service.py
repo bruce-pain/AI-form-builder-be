@@ -8,8 +8,8 @@ from groq import (
     APIConnectionError,
     APIStatusError,
     APITimeoutError,
-    AuthenticationError,
     AsyncGroq,
+    AuthenticationError,
     RateLimitError,
 )
 from groq.types.chat import ChatCompletionMessageParam
@@ -21,7 +21,7 @@ from app.core.logger import logger
 from app.features.llm.groq_utils import SYSTEM_PROMPT, parse_message, run_inference
 from app.features.llm.models import ConversationPrompt
 from app.features.llm.repository import ConversationRepository
-from app.features.llm.schemas import FormQuestionList
+from app.features.llm.schemas import FormResponse
 
 
 class LLMService:
@@ -34,8 +34,8 @@ class LLMService:
         self,
         user_prompt: str,
         conversation_id: Optional[str] = None,
-        current_state: Optional[FormQuestionList] = None,
-    ) -> tuple[str, FormQuestionList]:
+        current_state: Optional[FormResponse] = None,
+    ) -> tuple[str, FormResponse]:
         if not user_prompt:
             logger.warning("LLM generation attempted with empty prompt")
             raise HTTPException(
@@ -61,7 +61,9 @@ class LLMService:
                 lines.append(f'{i}. "{p}"')
             lines.append("")
 
-        lines.append(f"Current form state: {current_state.model_dump_json() if current_state else 'None'}")
+        lines.append(
+            f"Current form state: {current_state.model_dump_json() if current_state else 'None'}"
+        )
         lines.append("")
         lines.append(f"New instruction: {user_prompt}")
 

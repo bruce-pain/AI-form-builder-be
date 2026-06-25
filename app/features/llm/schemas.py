@@ -6,16 +6,18 @@ from app.core.base.schema import BaseResponseModel
 from app.features.form.schemas import FormQuestionInput
 
 
-class FormQuestionList(BaseModel):
+class FormResponse(BaseModel):
+    title: Optional[str]
+    description: Optional[str]
     questions: List[FormQuestionInput]
 
 
 class LLMRequest(BaseModel):
     prompt: str
     conversation_id: Optional[str] = None
-    current_state: Optional[FormQuestionList] = None
+    current_state: Optional[FormResponse] = None
 
 
 class LLMResponse(BaseResponseModel):
-    data: FormQuestionList
+    data: FormResponse
     conversation_id: str
