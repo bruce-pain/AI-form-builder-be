@@ -3,11 +3,11 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
-from redis.asyncio import Redis
+from sqlalchemy.orm import Session
 
+from app.core.database import get_db
 from app.core.dependencies.security import get_current_user
 from app.core.groq import client as groq_client
-from app.core.redis import get_redis_client
 from app.features.auth.models import User
 from app.features.llm import schemas
 from app.features.llm.service import LLMService
@@ -25,11 +25,11 @@ llm_router = APIRouter(prefix="/llm", tags=["LLM"])
 async def generate_questions(
     schema: schemas.LLMRequest,
     current_user: Annotated[User, Depends(get_current_user)],
-    redis: Annotated[Redis, Depends(get_redis_client)],
+    db: Annotated[Session, Depends(get_db)],
 ):
     service = LLMService(
         groq_client=groq_client,
-        redis_client=redis,
+        db=db,
         user_id=current_user.id,
     )
     conversation_id, result = await service.generate(

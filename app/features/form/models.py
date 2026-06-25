@@ -33,6 +33,10 @@ class Form(BaseTableModel):
 
     is_published: Mapped[bool] = mapped_column(default=False)
 
+    conversation_id: Mapped[Optional[str]] = mapped_column(
+        String, nullable=True, default=None
+    )
+
     # Define many to one relationship with user
     user: Mapped["User"] = relationship(back_populates="forms")  # noqa: F821
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"))

@@ -7,11 +7,13 @@ from app.core.logger import logger
 from app.features.form import schemas
 from app.features.form.models import Form, FormQuestion
 from app.features.form.repository import FormRepository
+from app.features.llm.repository import ConversationRepository
 
 
 class FormService:
     def __init__(self, db: Session):
         self.repository = FormRepository(db)
+        self.conversation_repo = ConversationRepository(db)
 
     def create(self, schema: schemas.FormCreateRequest, user_id: str) -> Form:
         logger.info("Creating form for user: %s | title: %s", user_id, schema.title)
@@ -23,6 +25,7 @@ class FormService:
                 if schema.questions is not None
                 else None
             ),
+            conversation_id=schema.conversation_id,
             user_id=user_id,
         )
         created = self.repository.create(form)
@@ -68,6 +71,8 @@ class FormService:
             user_id,
         )
         for key, value in update_data.items():
+            if key == "questions" and value is not None:
+                value = [schemas.FormQuestionInput(**q) for q in value]
             setattr(form, key, value)
 
         # check if is_published is set to true
@@ -81,6 +86,15 @@ class FormService:
 
         self.repository.db.commit()
         self.repository.db.refresh(form)
+
+        if form.is_published and form.conversation_id:
+            self.conversation_repo.delete_conversation(form.conversation_id)
+            logger.info(
+                "Conversation prompts cleared | conv: %s | user: %s",
+                form.conversation_id,
+                user_id,
+            )
+
         logger.info("Form updated successfully | id: %s | user: %s", form_id, user_id)
         return form
 

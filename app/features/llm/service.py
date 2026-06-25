@@ -14,18 +14,20 @@ from groq import (
 )
 from groq.types.chat import ChatCompletionMessageParam
 from pydantic import ValidationError
-from redis.asyncio import Redis
+from sqlalchemy.orm import Session
 from uuid_extensions import uuid7
 
 from app.core.logger import logger
 from app.features.llm.groq_utils import SYSTEM_PROMPT, parse_message, run_inference
+from app.features.llm.models import ConversationPrompt
+from app.features.llm.repository import ConversationRepository
 from app.features.llm.schemas import FormQuestionList
 
 
 class LLMService:
-    def __init__(self, groq_client: AsyncGroq, redis_client: Redis, user_id: str) -> None:
+    def __init__(self, groq_client: AsyncGroq, db: Session, user_id: str) -> None:
         self.groq_client = groq_client
-        self.redis = redis_client
+        self.repository = ConversationRepository(db)
         self.user_id = user_id
 
     async def generate(
@@ -50,13 +52,7 @@ class LLMService:
             user_prompt,
         )
 
-        redis_key = f"conversation:{self.user_id}:{conversation_id}"
-
-        prior_prompts = []
-        try:
-            prior_prompts = await self.redis.lrange(redis_key, 0, -1)
-        except Exception:
-            logger.warning("Failed to read Redis key %s, starting fresh", redis_key)
+        prior_prompts = self.repository.get_prompts(conversation_id)
 
         lines: List[str] = []
         if prior_prompts:
@@ -125,11 +121,9 @@ class LLMService:
                 detail="Error generating result",
             )
 
-        try:
-            await self.redis.rpush(redis_key, user_prompt)
-            await self.redis.expire(redis_key, 1800)
-        except Exception:
-            logger.warning("Failed to persist conversation to Redis")
+        self.repository.create(
+            ConversationPrompt(conversation_id=conversation_id, prompt=user_prompt)
+        )
 
         logger.info(
             "Form questions generated successfully | conv: %s | questions: %d",
