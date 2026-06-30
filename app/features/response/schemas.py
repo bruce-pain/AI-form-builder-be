@@ -17,18 +17,12 @@ class ResponseAnswerInput(ResponseAnswer):
     @model_validator(mode="after")
     def check_answer_type(self: Self) -> Self:
         if self.answer_type == "select":
-            if self.select_answer is None or len(self.select_answer) < 1:
-                raise ValueError(
-                    "select_answer is required when answer_type is 'select'"
-                )
-            elif self.text_answer is not None:
+            if self.text_answer is not None:
                 raise ValueError(
                     "text_answer must be None when answer_type is 'select'"
                 )
         elif self.answer_type == "text":
-            if self.text_answer is None or len(self.text_answer) < 1:
-                raise ValueError("text_answer is required when answer_type is 'text'")
-            elif self.select_answer is not None:
+            if self.select_answer is not None:
                 raise ValueError(
                     "select_answer must be None when answer_type is 'text'"
                 )

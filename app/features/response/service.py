@@ -69,11 +69,29 @@ class ResponseService:
                     )
                 )
 
+            # check required questions have non-empty answers
+            if answer_question.required:
+                if answer.answer_type == "text" and (
+                    answer.text_answer is None or len(answer.text_answer) < 1
+                ):
+                    http_422_error(
+                        detail="Question '{}' is required but answer is empty".format(
+                            question_id
+                        )
+                    )
+                elif answer.answer_type == "select" and (
+                    answer.select_answer is None or len(answer.select_answer) < 1
+                ):
+                    http_422_error(
+                        detail="Question '{}' is required but answer is empty".format(
+                            question_id
+                        )
+                    )
+
             # check if answer type is select
-            if answer.answer_type == "select":
+            if answer.answer_type == "select" and answer.select_answer:
                 # check if the selected answer is in the questions options
 
-                # cast answer.select_answer to List[str] so the Type Checker can shut up
                 select_answer = cast(List[str], answer.select_answer)
                 select_options = cast(List[str], answer_question.answer_select_options)
                 for option in select_answer:

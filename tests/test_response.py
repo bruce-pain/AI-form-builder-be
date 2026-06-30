@@ -268,6 +268,64 @@ class TestSubmitResponse:
         response = client.post(f"/api/v1/forms/{form_id}/responses", json=payload)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
+    def test_submit_response_non_required_question_empty_answer(
+        self, client, auth_headers
+    ):
+        form_data = {
+            "title": "Optional Questions Form",
+            "description": "Form with optional questions",
+            "questions": [
+                {
+                    "id": "oq1",
+                    "text": "Optional text",
+                    "answer_type": "text",
+                    "answer_select_options": None,
+                    "answer_select_multiple": None,
+                    "required": False,
+                },
+                {
+                    "id": "oq2",
+                    "text": "Optional select",
+                    "answer_type": "select",
+                    "answer_select_options": ["X", "Y"],
+                    "answer_select_multiple": False,
+                    "required": False,
+                },
+            ],
+        }
+        response = client.post("/api/v1/forms", json=form_data, headers=auth_headers)
+        assert response.status_code == status.HTTP_201_CREATED
+        form_id = response.json()["data"]["id"]
+
+        response = client.patch(
+            f"/api/v1/forms/{form_id}",
+            json={"is_published": True},
+            headers=auth_headers,
+        )
+        assert response.status_code == status.HTTP_200_OK
+
+        payload = {
+            "answers": [
+                {
+                    "question_id": "oq1",
+                    "answer_type": "text",
+                    "text_answer": None,
+                    "select_answer": None,
+                },
+                {
+                    "question_id": "oq2",
+                    "answer_type": "select",
+                    "text_answer": None,
+                    "select_answer": None,
+                },
+            ],
+        }
+        response = client.post(f"/api/v1/forms/{form_id}/responses", json=payload)
+        assert response.status_code == status.HTTP_201_CREATED
+        data = response.json()
+        assert data["data"]["answers"][0]["text_answer"] is None
+        assert data["data"]["answers"][1]["select_answer"] is None
+
 
 class TestListResponses:
     def test_list_responses_success(self, client, auth_headers, created_response):
