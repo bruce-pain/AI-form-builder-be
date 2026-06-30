@@ -19,6 +19,7 @@ from uuid_extensions import uuid7
 
 from app.core.logger import logger
 from app.features.llm.groq_utils import SYSTEM_PROMPT, parse_message, run_inference
+from app.features.llm.instruction_engine import InstructionError, apply_instructions
 from app.features.llm.models import ConversationPrompt
 from app.features.llm.repository import ConversationRepository
 from app.features.llm.schemas import FormResponse
@@ -108,7 +109,7 @@ class LLMService:
             )
 
         try:
-            result = parse_message(llm_response)
+            instruction_batch = parse_message(llm_response)
         except (json.JSONDecodeError, ValidationError) as e:
             logger.error("Failed to parse LLM response: %s", e)
             raise HTTPException(
@@ -116,11 +117,20 @@ class LLMService:
                 detail="Invalid LLM response",
             )
 
-        if not result:
+        if not instruction_batch:
             logger.error("LLM returned empty response")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Error generating result",
+            )
+
+        try:
+            result = apply_instructions(current_state, instruction_batch.instructions)
+        except InstructionError as e:
+            logger.error("Invalid instructions from LLM: %s", e)
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid instructions: {e}",
             )
 
         self.repository.create(
