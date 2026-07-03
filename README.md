@@ -14,7 +14,7 @@
 
 A REST API that lets users build dynamic forms through natural language conversations. Describe the form you want, and the API uses Groq's LLM to generate structured questions with proper validation rules. Iterate via follow-up prompts, publish, and collect responses — all through clean REST endpoints.
 
-**Frontend Repository:** [github.com/bruce-pain/AI-form-builder-fe](https://github.com/bruce-pain/AI-form-builder-fe)
+**Frontend Repository:** [github.com/bruce-pain/ai-form-builder-fe](https://github.com/bruce-pain/ai-form-builder-fe)
 
 ---
 
@@ -42,17 +42,16 @@ Each layer is independently testable. Pydantic schemas handle request/response v
 
 ## Tech Stack
 
-| Category | Choice |
-|----------|--------|
-| Framework | [FastAPI](https://fastapi.tiangolo.com) |
-| Database | [PostgreSQL](https://postgresql.org) |
-| Migrations | [Alembic](https://alembic.sqlalchemy.org) |
-| LLM Provider | [Groq API](https://groq.com) |
-| Auth | JWT (access + refresh tokens) |
-| Password Hashing | bcrypt via [Passlib](https://passlib.readthedocs.io) |
-| Package Manager | [uv](https://github.com/astral-sh/uv) |
-| Linting / Formatting | [Ruff](https://docs.astral.sh/ruff) |
-| Testing | [pytest](https://pytest.org) |
+| Category             | Choice                                    |
+| -------------------- | ----------------------------------------- |
+| Framework            | [FastAPI](https://fastapi.tiangolo.com)   |
+| Database             | [PostgreSQL](https://postgresql.org)      |
+| Migrations           | [Alembic](https://alembic.sqlalchemy.org) |
+| LLM Provider         | [Groq API](https://groq.com)              |
+| Auth                 | JWT (access + refresh tokens)             |
+| Package Manager      | [uv](https://github.com/astral-sh/uv)     |
+| Linting / Formatting | [Ruff](https://docs.astral.sh/ruff)       |
+| Testing              | [pytest](https://pytest.org)              |
 
 ---
 
@@ -71,37 +70,37 @@ Each layer is independently testable. Pydantic schemas handle request/response v
 
 ### Authentication
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/api/v1/auth/register` | Create a new user account |
-| POST | `/api/v1/auth/login` | Login with email and password |
-| POST | `/api/v1/auth/token/refresh` | Refresh access and refresh tokens |
-| GET | `/api/v1/auth/user` | Get details of the authenticated user |
+| Method | Path                         | Description                           |
+| ------ | ---------------------------- | ------------------------------------- |
+| POST   | `/api/v1/auth/register`      | Create a new user account             |
+| POST   | `/api/v1/auth/login`         | Login with email and password         |
+| POST   | `/api/v1/auth/token/refresh` | Refresh access and refresh tokens     |
+| GET    | `/api/v1/auth/user`          | Get details of the authenticated user |
 
 ### Forms
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/api/v1/forms` | Create a new form |
-| GET | `/api/v1/forms` | List all forms for the authenticated user |
-| GET | `/api/v1/forms/{id}` | Get a single form |
-| PATCH | `/api/v1/forms/{id}` | Update a form |
-| DELETE | `/api/v1/forms/{id}` | Delete a form |
-| GET | `/api/v1/forms/public/{id}` | Get a published form (no auth required) |
+| Method | Path                        | Description                               |
+| ------ | --------------------------- | ----------------------------------------- |
+| POST   | `/api/v1/forms`             | Create a new form                         |
+| GET    | `/api/v1/forms`             | List all forms for the authenticated user |
+| GET    | `/api/v1/forms/{id}`        | Get a single form                         |
+| PATCH  | `/api/v1/forms/{id}`        | Update a form                             |
+| DELETE | `/api/v1/forms/{id}`        | Delete a form                             |
+| GET    | `/api/v1/forms/public/{id}` | Get a published form (no auth required)   |
 
 ### AI Question Generation
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/api/v1/llm` | Generate or modify form questions using a natural language prompt |
+| Method | Path          | Description                                                       |
+| ------ | ------------- | ----------------------------------------------------------------- |
+| POST   | `/api/v1/llm` | Generate or modify form questions using a natural language prompt |
 
 ### Responses
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/api/v1/forms/{id}/responses` | Submit a response to a published form (no auth required) |
-| GET | `/api/v1/forms/{id}/responses` | List all responses for a form (auth required) |
-| GET | `/api/v1/forms/{id}/responses/{rid}` | Get a single response (auth required) |
+| Method | Path                                 | Description                                              |
+| ------ | ------------------------------------ | -------------------------------------------------------- |
+| POST   | `/api/v1/forms/{id}/responses`       | Submit a response to a published form (no auth required) |
+| GET    | `/api/v1/forms/{id}/responses`       | List all responses for a form (auth required)            |
+| GET    | `/api/v1/forms/{id}/responses/{rid}` | Get a single response (auth required)                    |
 
 ---
 
@@ -139,20 +138,20 @@ The server starts at `http://localhost:8000`.
 
 ### Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `ENVIRONMENT` | Runtime environment (`dev` or `prod`) |
-| `DATABASE_TYPE` | Database type (`postgresql`) |
-| `DATABASE_NAME` | Database name |
-| `DATABASE_USER` | Database username |
-| `DATABASE_PASSWORD` | Database password |
-| `DATABASE_HOST` | Database host |
-| `DATABASE_PORT` | Database port |
-| `GROQ_API_KEY` | API key for Groq LLM access |
-| `SECRET_KEY` | Secret key for JWT signing |
-| `ALGORITHM` | JWT signing algorithm (`HS256`) |
-| `ACCESS_TOKEN_EXPIRY` | Access token lifetime in hours |
-| `REFRESH_TOKEN_EXPIRY` | Refresh token lifetime in hours |
+| Variable               | Description                           |
+| ---------------------- | ------------------------------------- |
+| `ENVIRONMENT`          | Runtime environment (`dev` or `prod`) |
+| `DATABASE_TYPE`        | Database type (`postgresql`)          |
+| `DATABASE_NAME`        | Database name                         |
+| `DATABASE_USER`        | Database username                     |
+| `DATABASE_PASSWORD`    | Database password                     |
+| `DATABASE_HOST`        | Database host                         |
+| `DATABASE_PORT`        | Database port                         |
+| `GROQ_API_KEY`         | API key for Groq LLM access           |
+| `SECRET_KEY`           | Secret key for JWT signing            |
+| `ALGORITHM`            | JWT signing algorithm (`HS256`)       |
+| `ACCESS_TOKEN_EXPIRY`  | Access token lifetime in hours        |
+| `REFRESH_TOKEN_EXPIRY` | Refresh token lifetime in hours       |
 
 ### Database Setup
 
@@ -174,17 +173,17 @@ make upgrade
 
 ## Development Commands
 
-| Command | Description |
-|---------|-------------|
-| `make run` | Start development server with hot reload |
-| `make install` | Install project dependencies |
-| `make migrate` | Generate a new migration |
-| `make upgrade` | Apply all pending migrations |
-| `make downgrade` | Revert the last migration |
-| `make test` | Run the test suite |
-| `make lint` | Check code for linting errors |
-| `make format` | Format the codebase |
-| `make clean` | Remove cache and generated files |
+| Command          | Description                              |
+| ---------------- | ---------------------------------------- |
+| `make run`       | Start development server with hot reload |
+| `make install`   | Install project dependencies             |
+| `make migrate`   | Generate a new migration                 |
+| `make upgrade`   | Apply all pending migrations             |
+| `make downgrade` | Revert the last migration                |
+| `make test`      | Run the test suite                       |
+| `make lint`      | Check code for linting errors            |
+| `make format`    | Format the codebase                      |
+| `make clean`     | Remove cache and generated files         |
 
 Run `make help` to see all available commands.
 
@@ -211,7 +210,6 @@ Run `make help` to see all available commands.
 │   └── main.py                    # Application entry point
 ├── alembic/                       # Database migrations
 ├── tests/                         # Test suite
-├── posting-collection/            # API request examples (Posting format)
 ├── Makefile                       # Development command shortcuts
 ├── pyproject.toml                 # Project configuration & dependencies
 └── .env.sample                    # Environment variable template
