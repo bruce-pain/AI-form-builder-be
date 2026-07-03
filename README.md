@@ -2,7 +2,7 @@
 
 # AI Form Builder API
 
-**Build forms through natural language — powered by Groq + FastAPI**
+**Build forms through natural language: powered by Groq + FastAPI**
 
 [![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=fff)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=fff)](https://fastapi.tiangolo.com)
@@ -12,7 +12,7 @@
 
 </div>
 
-A REST API that lets users build dynamic forms through natural language conversations. Describe the form you want, and the API uses Groq's LLM to generate structured questions with proper validation rules. Iterate via follow-up prompts, publish, and collect responses — all through clean REST endpoints.
+A REST API that lets users build dynamic forms through natural language conversations. Describe the form you want, and the API uses Groq's LLM to generate structured questions with proper validation rules. Iterate via follow-up prompts, publish, and collect responses, all through clean REST endpoints.
 
 **Frontend Repository:** [github.com/bruce-pain/ai-form-builder-fe](https://github.com/bruce-pain/ai-form-builder-fe)
 
@@ -22,7 +22,7 @@ A REST API that lets users build dynamic forms through natural language conversa
 
 ### LLM + Instruction Engine
 
-The LLM doesn't output final form JSON directly. Instead, it emits a list of deterministic editing operations (`set_title`, `add_question`, `update_question`, `remove_question`, `reorder_questions`) that a local instruction engine applies. This keeps the LLM's role narrow and verifiable — the engine enforces constraints like unique question IDs, valid reorderings, and type-appropriate validation rules.
+The LLM doesn't output final form JSON directly. Instead, it emits a list of deterministic editing operations (`set_title`, `add_question`, `update_question`, `remove_question`, `reorder_questions`) that a local instruction engine applies. This keeps the LLM's role narrow and verifiable: the engine enforces constraints like unique question IDs, valid reorderings, and type-appropriate validation rules.
 
 ### Conversational Refinement
 
@@ -57,12 +57,12 @@ Each layer is independently testable. Pydantic schemas handle request/response v
 
 ## Features
 
-- **JWT Authentication** — Register, login, and token refresh with access/refresh token pairs
-- **Form CRUD** — Full create, read, update, delete for forms with structured question schemas
-- **AI Question Generation** — Describe a form in plain English; the LLM generates a complete set of questions with appropriate types (text / select / multi-select) and validation rules
-- **Public Response Collection** — Submit responses to published forms without authentication (ideal for embedding in external sites)
-- **Response Dashboard** — Authenticated users can view all responses collected for their forms
-- **Structured Logging** — Application and error logs persisted to file with rotation
+- **JWT Authentication**: Register, login, and token refresh with access/refresh token pairs
+- **Form CRUD**: Full create, read, update, delete for forms with structured question schemas
+- **AI Question Generation**: Describe a form in plain English; the LLM generates a complete set of questions with appropriate types (text / select / multi-select) and validation rules
+- **Public Response Collection**: Submit responses to published forms without authentication (ideal for embedding in external sites)
+- **Response Dashboard**: Authenticated users can view all responses collected for their forms
+- **Structured Logging**: Application and error logs persisted to file with rotation
 
 ---
 
@@ -221,8 +221,8 @@ Run `make help` to see all available commands.
 
 Once the server is running:
 
-- **Swagger UI** — [http://localhost:8000/v1/docs](http://localhost:8000/v1/docs)
-- **ReDoc** — [http://localhost:8000/v1/redoc](http://localhost:8000/v1/redoc)
+- **Swagger UI**: [http://localhost:8000/v1/docs](http://localhost:8000/v1/docs)
+- **ReDoc**: [http://localhost:8000/v1/redoc](http://localhost:8000/v1/redoc)
 
 ---
 
