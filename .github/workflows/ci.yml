@@ -45,8 +45,8 @@ jobs:
       - name: Install dependencies
         run: make install
 
-      # - name: Run migrations
-      #   run: make upgrade
+      - name: Run migrations
+        run: make upgrade
 
       - name: Run Ruff
         run: make lint
