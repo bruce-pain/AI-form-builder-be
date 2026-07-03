@@ -16,6 +16,8 @@ A REST API that lets users build dynamic forms through natural language conversa
 
 **Frontend Repository:** [github.com/bruce-pain/ai-form-builder-fe](https://github.com/bruce-pain/ai-form-builder-fe)
 
+**Live Demo:** [API Docs](https://ai-form-builder-be.onrender.com/v1/docs) · [Frontend](https://ai-form-builder-fe.vercel.app/)
+
 ---
 
 ## Architecture
@@ -219,10 +221,10 @@ Run `make help` to see all available commands.
 
 ## API Documentation
 
-Once the server is running:
-
-- **Swagger UI**: [http://localhost:8000/v1/docs](http://localhost:8000/v1/docs)
-- **ReDoc**: [http://localhost:8000/v1/redoc](http://localhost:8000/v1/redoc)
+- **Swagger UI** (live): [ai-form-builder-be.onrender.com/v1/docs](https://ai-form-builder-be.onrender.com/v1/docs)
+- **Swagger UI** (local): [http://localhost:8000/v1/docs](http://localhost:8000/v1/docs)
+- **ReDoc** (live): [ai-form-builder-be.onrender.com/v1/redoc](https://ai-form-builder-be.onrender.com/v1/redoc)
+- **ReDoc** (local): [http://localhost:8000/v1/redoc](http://localhost:8000/v1/redoc)
 
 ---
 
