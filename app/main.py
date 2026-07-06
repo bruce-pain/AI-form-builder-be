@@ -5,10 +5,11 @@ from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
 from sqlalchemy.exc import IntegrityError
+
+from app.core.limiter import limiter
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.core.config import settings
@@ -22,8 +23,6 @@ async def lifespan(app: FastAPI):
     yield
     logger.info("Application shutdown")
 
-
-limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
     title="AI Form Builder",

@@ -2,12 +2,13 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies.security import get_current_user
 from app.core.groq import client as groq_client
+from app.core.limiter import limiter
 from app.features.auth.models import User
 from app.features.llm import schemas
 from app.features.llm.service import LLMService
@@ -22,7 +23,9 @@ llm_router = APIRouter(prefix="/llm", tags=["LLM"])
     summary="Generate form questions",
     description="Generate or modify a list of form questions using an LLM based on a user prompt, with conversation memory",
 )
+@limiter.limit("10/minute")
 async def generate_questions(
+    request: Request,
     schema: schemas.LLMRequest,
     current_user: Annotated[User, Depends(get_current_user)],
     db: Annotated[Session, Depends(get_db)],
