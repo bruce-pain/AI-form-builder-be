@@ -13,6 +13,7 @@ class UserService:
         self.repository = UserRepository(db)
 
     def register(self, schema: auth_schemas.RegisterRequest) -> User:
+        schema.email = schema.email.lower()
         if self.repository.get_by_email(schema.email):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -27,6 +28,7 @@ class UserService:
         return self.repository.create(user)
 
     def authenticate(self, schema: auth_schemas.LoginRequest) -> User:
+        schema.email = schema.email.lower()
         user = self.repository.get_by_email(schema.email)
 
         if not user:
