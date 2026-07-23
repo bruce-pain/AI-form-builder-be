@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from pydantic import BaseModel, EmailStr, StringConstraints
+from pydantic import BaseModel, EmailStr, Field, StringConstraints
 
 from app.core.base.schema import BaseResponseModel
 
@@ -16,7 +16,7 @@ class LoginRequest(BaseModel):
 
 
 class TokenRefreshRequest(BaseModel):
-    refresh_token: str
+    refresh_token: str = Field(..., min_length=1)
 
 
 class TokenRefreshResponse(BaseResponseModel):
