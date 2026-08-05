@@ -1,6 +1,6 @@
 <div align="center">
 
-# AI Form Builder API
+# Formbrew API
 
 **Build forms through natural language: powered by Groq + FastAPI**
 
@@ -14,9 +14,9 @@
 
 A REST API that lets users build dynamic forms through natural language conversations. Describe the form you want, and the API uses Groq's LLM to generate structured questions with proper validation rules. Iterate via follow-up prompts, publish, and collect responses, all through clean REST endpoints.
 
-**Frontend Repository:** [github.com/bruce-pain/ai-form-builder-fe](https://github.com/bruce-pain/ai-form-builder-fe)
+**Frontend Repository:** [github.com/bruce-pain/formbrew-fe](https://github.com/bruce-pain/formbrew-fe)
 
-**Live Demo:** [API Docs](https://ai-form-builder-be.onrender.com/v1/docs) · [Frontend](https://ai-form-builder-fe.vercel.app/)
+**Live Demo:** [API Docs](https://ai-form-builder-be.onrender.com/v1/docs) · [Frontend](https://formbrew.vercel.app/)
 
 ---
 
@@ -119,8 +119,8 @@ Each layer is independently testable. Pydantic schemas handle request/response v
 
 ```sh
 # Clone the repository
-git clone https://github.com/yourusername/AI-form-builder-be.git
-cd AI-form-builder-be
+git clone https://github.com/bruce-pain/formbrew-be.git
+cd formbrew-be
 
 # Create environment file
 cp .env.sample .env
