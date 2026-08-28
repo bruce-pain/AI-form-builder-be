@@ -241,10 +241,6 @@ docker compose down    # stop and remove containers, keep the database volume
 docker compose down -v # stop and remove containers AND wipe the database volume
 ```
 
-### Using an external database (e.g. Supabase)
-
-Not yet supported out of the box. The local compose setup is wired to the containerized PostgreSQL. Pointing the app at an external Postgres is planned as a future follow-up.
-
 ---
 
 ## Project Structure
