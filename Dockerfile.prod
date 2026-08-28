@@ -1,0 +1,36 @@
+# Stage 1: builder - installs deps, then discarded
+FROM python:3.12-slim AS builder
+
+COPY --from=ghcr.io/astral-sh/uv:0.12.7 /uv /uvx /bin/
+
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
+
+WORKDIR /app
+
+COPY pyproject.toml uv.lock ./
+RUN uv sync --locked --no-dev --no-editable
+
+# Stage 2: runtime - final, minimal image
+FROM python:3.12-slim
+
+COPY --from=builder /app/.venv /app/.venv
+ENV PATH="/app/.venv/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+RUN groupadd -r app && useradd -r -g app app
+
+WORKDIR /app
+
+COPY --chown=app:app app/ ./app/
+COPY --chown=app:app alembic/ ./alembic/
+COPY --chown=app:app alembic.ini ./
+
+RUN mkdir -p logs && chown app:app logs
+
+USER app
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

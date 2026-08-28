@@ -191,6 +191,58 @@ Run `make help` to see all available commands.
 
 ---
 
+## Docker Development
+
+Run the backend and its own PostgreSQL in containers, so you don't need PostgreSQL installed globally.
+
+> [!IMPORTANT]
+> The container reads database credentials from your `.env` (`DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_NAME`). Postgres is initialized from these values on a fresh database volume.
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/)
+- A `.env` file (see [Setup](#setup) above)
+- A [Groq API key](https://console.groq.com/keys)
+
+### Start the stack
+
+```sh
+docker compose up --build
+```
+
+This builds the `formbrew-backend` image and starts both the `app` (FastAPI on `http://localhost:8000`) and `postgres` (on port `5432`) containers. The `app` container bind-mounts `app/`, `tests/`, `alembic/`, and the `Makefile`, so code changes hot-reload without a rebuild.
+
+### Run commands inside the container
+
+Use `docker compose exec app make ...` to run the same Makefile targets in the container:
+
+```sh
+docker compose exec app make upgrade   # apply pending migrations
+docker compose exec app make lint     # lint check
+docker compose exec app make test     # run the test suite
+docker compose exec app make format   # format the codebase
+```
+
+### Create the test database (one-time per volume)
+
+Tests connect to a separate `test_db` database via `TEST_DATABASE_URL`. The Postgres container only auto-creates the app database (`DATABASE_NAME`), so create `test_db` once per fresh database volume:
+
+```sh
+docker compose exec postgres createdb -U "$DATABASE_USER" test_db
+```
+
+> [!WARNING]
+> `docker compose down -v` deletes the `pgdata` database volume. After doing this, you must re-apply migrations (`make upgrade`) **and** re-create `test_db` with the command above.
+
+### Stop the stack
+
+```sh
+docker compose down    # stop and remove containers, keep the database volume
+docker compose down -v # stop and remove containers AND wipe the database volume
+```
+
+---
+
 ## Project Structure
 
 ```
