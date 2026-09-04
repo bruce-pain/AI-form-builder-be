@@ -106,6 +106,14 @@ class ResponseService:
                             )
                         )
 
+                # single-select: only one answer allowed
+                if answer_question.answer_select_multiple is False and len(select_answer) > 1:
+                    http_422_error(
+                        detail="Question '{}' is single-select but {} options were provided".format(
+                            question_id, len(select_answer)
+                        )
+                    )
+
             answered_question_ids.append(question_id)
 
         # check required questions

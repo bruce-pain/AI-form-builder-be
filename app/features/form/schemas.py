@@ -43,14 +43,14 @@ class FormQuestionInput(FormQuestion):
 
 class FormCreateRequest(BaseModel):
     title: Annotated[str, Field(min_length=1, max_length=255)]
-    description: Annotated[str, Field(min_length=1, max_length=2000)]
+    description: Annotated[str, Field(max_length=2000)]
     questions: Optional[List[FormQuestionInput]] = Field(default=None, min_length=1)
     conversation_id: Optional[str] = None
 
 
 class FormUpdateRequest(BaseModel):
     title: Optional[str] = Field(default=None, min_length=1, max_length=255)
-    description: Optional[str] = Field(default=None, min_length=1, max_length=2000)
+    description: Optional[str] = Field(default=None, max_length=2000)
     questions: Optional[List[FormQuestionInput]] = Field(default=None, min_length=1)
     is_published: Optional[bool] = None
 

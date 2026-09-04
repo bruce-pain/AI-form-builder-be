@@ -105,7 +105,7 @@ class TestCreateForm:
     def test_create_form_empty_description(self, client, auth_headers):
         payload = {"title": "Title", "description": ""}
         response = client.post("/api/v1/forms", json=payload, headers=auth_headers)
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_201_CREATED
 
     def test_create_form_question_empty_text(self, client, auth_headers):
         payload = {
