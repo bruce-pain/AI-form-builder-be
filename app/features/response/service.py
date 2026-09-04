@@ -1,6 +1,6 @@
 """Response service"""
 
-from typing import List, cast
+from typing import List
 
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
@@ -89,11 +89,15 @@ class ResponseService:
                     )
 
             # check if answer type is select
-            if answer.answer_type == "select" and answer.select_answer:
+            if (
+                answer.answer_type == "select"
+                and answer.select_answer
+                and answer_question.answer_select_options
+            ):
                 # check if the selected answer is in the questions options
 
-                select_answer = cast(List[str], answer.select_answer)
-                select_options = cast(List[str], answer_question.answer_select_options)
+                select_answer = answer.select_answer
+                select_options = answer_question.answer_select_options
                 for option in select_answer:
                     if option not in select_options:
                         http_422_error(
@@ -125,17 +129,15 @@ class ResponseService:
         logger.info("Submitting response for form: %s", form_id)
 
         form = self.form_repository.get_public_form(form_id)
-        if not form:
+        if not form or not form.questions:
             logger.warning("Form not found or not published | id: %s", form_id)
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Form not found or not published",
             )
 
-        form_questions = cast(List[FormQuestion], form.questions)
-
         validated_answers = self._validate_answers(
-            form_questions=form_questions,
+            form_questions=form.questions,
             answers=[ResponseAnswer.model_validate(a) for a in schema.answers],
         )
 
