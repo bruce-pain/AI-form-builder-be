@@ -12,6 +12,9 @@ class User(BaseTableModel):
 
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     password: Mapped[Optional[str]]
+    google_sub: Mapped[Optional[str]] = mapped_column(
+        unique=True, index=True, nullable=True
+    )
 
     forms: Mapped[List["Form"]] = relationship(back_populates="user")  # noqa: F821
 
