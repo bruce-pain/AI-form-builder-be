@@ -8,6 +8,7 @@ from app.core.dependencies.security import get_current_user
 from app.features.auth import schemas
 from app.features.auth.models import User
 from app.features.auth.service import UserService
+from app.features.auth.utils.google import verify_google_id_token
 from app.features.auth.utils.jwt import create_jwt_token, refresh_access_token
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -65,8 +66,40 @@ def login(
     response_data = schemas.AuthResponseData(id=user.id, email=user.email)
 
     return schemas.AuthResponse(
-        status_code=status.HTTP_201_CREATED,
+        status_code=status.HTTP_200_OK,
         message="User logged in successfully",
+        access_token=access_token,
+        refresh_token=refresh_token,
+        data=response_data,
+    )
+
+
+@auth_router.post(
+    path="/google",
+    status_code=status.HTTP_200_OK,
+    response_model=schemas.AuthResponse,
+    summary="Sign in or sign up with Google",
+    description="Verifies a Google ID token and returns jwt tokens along with user data",
+    tags=["Authentication"],
+)
+def google_auth(
+    schema: schemas.GoogleAuthRequest,
+    db: Annotated[Session, Depends(get_db)],
+):
+    claims = verify_google_id_token(schema.id_token)
+
+    service = UserService(db=db)
+
+    user = service.authenticate_google(claims=claims)
+
+    access_token = create_jwt_token("access", user.id)
+    refresh_token = create_jwt_token("refresh", user.id)
+
+    response_data = schemas.AuthResponseData(id=user.id, email=user.email)
+
+    return schemas.AuthResponse(
+        status_code=status.HTTP_200_OK,
+        message="User authenticated successfully",
         access_token=access_token,
         refresh_token=refresh_token,
         data=response_data,
