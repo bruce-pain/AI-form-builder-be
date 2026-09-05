@@ -13,11 +13,12 @@ dependencies = [
     "itsdangerous>=2.2.0,<3",
     "python-jose>=3.3.0,<4",
     "psycopg2-binary>=2.9.10,<3",
-    "passlib[bcrypt]>=1.7.4,<2",
     "pydantic-settings>=2.7.0,<3",
     "uuid7>=0.1.0,<0.2",
     "slowapi>=0.1.0,<0.2",
     "groq>=1.4.0",
+    "bcrypt>=5.0.0",
+    "google-auth[requests]>=2.40,<3",
 ]
 
 [dependency-groups]
