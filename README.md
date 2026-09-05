@@ -60,6 +60,7 @@ Each layer is independently testable. Pydantic schemas handle request/response v
 ## Features
 
 - **JWT Authentication**: Register, login, and token refresh with access/refresh token pairs
+- **Google Sign-In**: Sign in or sign up with a Google account; existing email/password accounts are linked automatically
 - **Form CRUD**: Full create, read, update, delete for forms with structured question schemas
 - **AI Question Generation**: Describe a form in plain English; the LLM generates a complete set of questions with appropriate types (text / select / multi-select) and validation rules
 - **Public Response Collection**: Submit responses to published forms without authentication (ideal for embedding in external sites)
@@ -76,6 +77,7 @@ Each layer is independently testable. Pydantic schemas handle request/response v
 | ------ | ---------------------------- | ------------------------------------- |
 | POST   | `/api/v1/auth/register`      | Create a new user account             |
 | POST   | `/api/v1/auth/login`         | Login with email and password         |
+| POST   | `/api/v1/auth/google`        | Sign in or sign up with a Google ID token |
 | POST   | `/api/v1/auth/token/refresh` | Refresh access and refresh tokens     |
 | GET    | `/api/v1/auth/user`          | Get details of the authenticated user |
 
@@ -150,6 +152,7 @@ The server starts at `http://localhost:8000`.
 | `DATABASE_HOST`        | Database host                         |
 | `DATABASE_PORT`        | Database port                         |
 | `GROQ_API_KEY`         | API key for Groq LLM access           |
+| `GOOGLE_CLIENT_ID`     | Google OAuth client ID (Google sign-in); leave empty to disable |
 | `SECRET_KEY`           | Secret key for JWT signing            |
 | `ALGORITHM`            | JWT signing algorithm (`HS256`)       |
 | `ACCESS_TOKEN_EXPIRY`  | Access token lifetime in hours        |
