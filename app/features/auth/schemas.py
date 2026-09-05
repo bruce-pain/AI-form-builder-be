@@ -19,6 +19,10 @@ class TokenRefreshRequest(BaseModel):
     refresh_token: str = Field(..., min_length=1)
 
 
+class GoogleAuthRequest(BaseModel):
+    id_token: str = Field(..., min_length=1)
+
+
 class TokenRefreshResponse(BaseResponseModel):
     access_token: str
     refresh_token: str
