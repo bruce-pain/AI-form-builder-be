@@ -73,7 +73,9 @@ class UserService:
         # rejected unverified emails, so Google has proven the holder owns this
         # address. The existing password, if any, is left untouched so both
         # sign-in methods keep working.
-        user = self.repository.get_by_email(claims.email)
+        email = claims.email.lower()
+
+        user = self.repository.get_by_email(email)
 
         if user:
             if user.google_sub and user.google_sub != claims.sub:
@@ -89,7 +91,7 @@ class UserService:
             logger.info("Linked Google account to existing user: %s", user.email)
             return user
 
-        user = User(email=claims.email, google_sub=claims.sub, password=None)
+        user = User(email=email, google_sub=claims.sub, password=None)
 
         logger.info("Creating user from Google sign-in: %s", user.email)
         return self.repository.create(user)
