@@ -1,6 +1,8 @@
 import pytest
 from fastapi import status
 
+from app.features.auth.models import User
+
 
 @pytest.fixture
 def test_user_data():
@@ -76,6 +78,20 @@ class TestLogin:
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Invalid password" in response.json()["message"]
+
+    def test_login_rejects_user_without_password(self, client, db_session):
+        """A user with no password set (e.g. created via a social login) must not
+        be able to authenticate through the email/password endpoint."""
+        db_session.add(User(email="social@example.com", password=None))
+        db_session.commit()
+
+        response = client.post(
+            "/api/v1/auth/login",
+            json={"email": "social@example.com", "password": "anything"},
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "Invalid password" in response.json()["message"]
+        assert "access_token" not in response.json()
 
 
 class TestTokenRefresh:

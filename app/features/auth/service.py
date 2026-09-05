@@ -37,7 +37,9 @@ class UserService:
                 detail="Invalid email",
             )
 
-        if user.password and not verify_password(schema.password, user.password):
+        # A user with no password set (e.g. one created through a social login)
+        # must never authenticate via this endpoint.
+        if not user.password or not verify_password(schema.password, user.password):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid password",
